@@ -10,4 +10,4 @@ This is for users that have a lot of small, local Unity projects projects (e.g. 
 
 # Disclaimer
 
-This tool removes files on your local disk. It is designed to only remove files, but in order to do that it needs to make assumptions about the folder structure to identify Unity projects and about what this folder structure contains (critical data or not). Use at your own risk. Always make backups of important data.
+This tool removes files on your local disk. It is designed to only remove files that Unity will re-generate when opening the project again. In order to do that, it needs to make assumptions about the folder structure to identify Unity projects and about what this folder structure contains (critical data or not). Use at your own risk. Always make backups of important data.
