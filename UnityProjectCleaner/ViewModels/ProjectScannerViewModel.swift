@@ -13,12 +13,32 @@ class ProjectScannerViewModel: ObservableObject {
 	@Published var projects: [UnityProject] = []
 	@Published var stats = CleaningStats()
 	@Published var selectedPath: String = NSHomeDirectory()
+	@Published var sortOption: ProjectSortOption = .lastUsed
+	@Published var sortAscending: Bool = false  // false = newest/largest first
 	
 	private let fileManager = FileManager.default
 	private var scanningTask: Task<Void, Never>?
 	
 	// Concurrent queue for parallel processing
 	private let processingQueue = DispatchQueue(label: "com.unitycleaner.processing", attributes: .concurrent)
+	
+	// Computed property for sorted projects
+	var sortedProjects: [UnityProject] {
+		let sorted: [UnityProject]
+		
+		switch sortOption {
+		case .lastUsed:
+			sorted = projects.sorted { sortAscending ? $0.lastModifiedDate < $1.lastModifiedDate : $0.lastModifiedDate > $1.lastModifiedDate }
+		case .name:
+			sorted = projects.sorted { sortAscending ? $0.name < $1.name : $0.name > $1.name }
+		case .size:
+			sorted = projects.sorted { sortAscending ? $0.sizeBeforeCleaning < $1.sizeBeforeCleaning : $0.sizeBeforeCleaning > $1.sizeBeforeCleaning }
+		case .cleanable:
+			sorted = projects.sorted { sortAscending ? $0.cleanableSize < $1.cleanableSize : $0.cleanableSize > $1.cleanableSize }
+		}
+		
+		return sorted
+	}
 	
 	// MARK: - Scanning
 	
@@ -448,3 +468,4 @@ class ProjectScannerViewModel: ObservableObject {
 		stats.totalCleanableSize = projects.filter { $0.isSelected }.reduce(0) { $0 + $1.cleanableSize }
 	}
 }
+

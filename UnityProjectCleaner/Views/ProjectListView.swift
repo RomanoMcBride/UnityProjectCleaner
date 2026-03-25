@@ -15,7 +15,7 @@ struct ProjectListView: View {
 	var body: some View {
 		VStack(spacing: 0) {
 			// Control buttons
-			HStack {
+			HStack(spacing: 12) {
 				Button("Select All") {
 					viewModel.selectAll()
 				}
@@ -25,6 +25,32 @@ struct ProjectListView: View {
 					viewModel.deselectAll()
 				}
 				.keyboardShortcut("d", modifiers: .command)
+				
+				Divider()
+					.frame(height: 20)
+				
+				// Sort controls
+				Text("Sort by:")
+					.font(.caption)
+					.foregroundColor(.secondary)
+				
+				Picker("", selection: $viewModel.sortOption) {
+					ForEach(ProjectSortOption.allCases, id: \.self) { option in
+						Label(option.rawValue, systemImage: option.systemImage)
+							.tag(option)
+					}
+				}
+				.pickerStyle(.segmented)
+				.frame(width: 320)
+				
+				Button(action: {
+					viewModel.sortAscending.toggle()
+				}) {
+					Image(systemName: viewModel.sortAscending ? "arrow.up" : "arrow.down")
+						.imageScale(.medium)
+				}
+				.buttonStyle(.borderless)
+				.help(viewModel.sortAscending ? "Ascending" : "Descending")
 				
 				Spacer()
 				
@@ -41,7 +67,7 @@ struct ProjectListView: View {
 			ZStack {
 				ScrollView {
 					LazyVStack(spacing: 0) {
-						ForEach(viewModel.projects) { project in
+						ForEach(viewModel.sortedProjects) { project in
 							ProjectRowView(
 								project: project,
 								onToggle: {
@@ -122,10 +148,22 @@ struct ProjectRowView: View {
 					.font(.system(.body, design: .default))
 					.fontWeight(.medium)
 				
-				Text(FormatHelper.formatPath(project.path))
-					.font(.caption)
-					.foregroundColor(.secondary)
-					.lineLimit(1)
+				HStack(spacing: 8) {
+					Text(FormatHelper.formatPath(project.path))
+						.font(.caption)
+						.foregroundColor(.secondary)
+						.lineLimit(1)
+					
+					if project.lastModifiedDate != Date.distantPast {
+						Text("•")
+							.foregroundColor(.secondary)
+							.font(.caption)
+						
+						Text(project.lastModifiedDate, style: .relative)
+							.font(.caption)
+							.foregroundColor(.secondary)
+					}
+				}
 			}
 			
 			Spacer()
