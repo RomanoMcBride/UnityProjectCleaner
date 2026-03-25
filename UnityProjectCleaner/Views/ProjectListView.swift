@@ -363,6 +363,39 @@ struct ProjectRowView: View {
 		.onTapGesture {
 			onToggle()
 		}
+		.contextMenu {
+			Button(action: {
+				showInFinder()
+			}) {
+				Label("Show in Finder", systemImage: "folder.badge.gearshape")
+			}
+			
+			Button(action: {
+				copyPath()
+			}) {
+				Label("Copy Path", systemImage: "doc.on.doc")
+			}
+			
+			Divider()
+			
+			Button(action: onToggle) {
+				if project.isSelected {
+					Label("Deselect", systemImage: "square")
+				} else {
+					Label("Select", systemImage: "checkmark.square")
+				}
+			}
+		}
+	}
+	
+	private func showInFinder() {
+		NSWorkspace.shared.selectFile(project.path.path, inFileViewerRootedAtPath: project.path.deletingLastPathComponent().path)
+	}
+	
+	private func copyPath() {
+		let pasteboard = NSPasteboard.general
+		pasteboard.clearContents()
+		pasteboard.setString(project.path.path, forType: .string)
 	}
 }
 
