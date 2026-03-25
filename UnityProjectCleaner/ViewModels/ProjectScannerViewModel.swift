@@ -17,6 +17,9 @@ class ProjectScannerViewModel: ObservableObject {
 	private let fileManager = FileManager.default
 	private var scanningTask: Task<Void, Never>?
 	
+	// Concurrent queue for parallel processing
+	private let processingQueue = DispatchQueue(label: "com.unitycleaner.processing", attributes: .concurrent)
+	
 	// MARK: - Scanning
 	
 	func resetScan() {
@@ -49,7 +52,7 @@ class ProjectScannerViewModel: ObservableObject {
 			updateStats()
 			
 			// Start calculating sizes
-			await calculateAllSizes()
+			calculateAllSizesInBackground()
 		}
 	}
 	
@@ -65,9 +68,8 @@ class ProjectScannerViewModel: ObservableObject {
 		let searchURL = URL(fileURLWithPath: selectedPath)
 		var foundProjects: [UnityProject] = []
 		var lastUpdateTime = Date()
-		let updateInterval: TimeInterval = 0.5 // Update UI every 0.5 seconds
+		let updateInterval: TimeInterval = 0.5
 		
-		// Use Task.detached to run on background thread
 		await Task.detached(priority: .userInitiated) {
 			guard let enumerator = self.fileManager.enumerator(
 				at: searchURL,
@@ -76,22 +78,18 @@ class ProjectScannerViewModel: ObservableObject {
 			) else { return }
 			
 			for case let fileURL as URL in enumerator {
-				// Check for cancellation
 				if Task.isCancelled { break }
 				
-				// Skip common non-project folders
 				let lastComponent = fileURL.lastPathComponent
 				if ["Library", "Temp", "node_modules", ".git", "Build", "Builds"].contains(lastComponent) {
 					enumerator.skipDescendants()
 					continue
 				}
 				
-				// Check if this is a Unity project
 				if await self.isUnityProject(at: fileURL) {
 					let project = UnityProject(path: fileURL)
 					foundProjects.append(project)
 					
-					// Throttle UI updates
 					let now = Date()
 					if now.timeIntervalSince(lastUpdateTime) > updateInterval {
 						await MainActor.run {
@@ -102,12 +100,10 @@ class ProjectScannerViewModel: ObservableObject {
 						lastUpdateTime = now
 					}
 					
-					// Skip descending into this project
 					enumerator.skipDescendants()
 				}
 			}
 			
-			// Final update
 			await MainActor.run {
 				self.projects = foundProjects
 			}
@@ -121,98 +117,155 @@ class ProjectScannerViewModel: ObservableObject {
 		return fileManager.fileExists(atPath: projectVersionURL.path)
 	}
 	
-	// MARK: - Size Calculation
+	// MARK: - Size Calculation (True Parallel with DispatchQueue)
 	
-	func calculateAllSizes() async {
-		guard !projects.isEmpty else { return }
-		
-		stats.isCalculating = true
-		stats.currentProjectIndex = 0
-		stats.totalProjectsToProcess = projects.count
-		
-		for index in projects.indices {
-			guard !Task.isCancelled else { break }
+	private func calculateAllSizesInBackground() {
+		Task.detached(priority: .userInitiated) { [weak self] in
+			guard let self = self else { return }
 			
-			stats.currentOperation = "Calculating: \(projects[index].name) (\(index + 1)/\(projects.count))"
-			stats.currentProjectIndex = index + 1
-			projects[index].isCalculatingSize = true
-			
-			let sizes = await calculateProjectSizes(for: projects[index])
-			projects[index].sizeBeforeCleaning = sizes.before
-			projects[index].cleanableSize = sizes.cleanable
-			projects[index].isCalculatingSize = false
-			
-			updateStats()
-		}
-		
-		stats.isCalculating = false
-		stats.currentOperation = "Ready to clean"
-		stats.currentProjectIndex = 0
-		stats.totalProjectsToProcess = 0
-	}
-	
-	private func recalculateSpecificProjects(_ projectsToRecalculate: [UnityProject]) async {
-		guard !projectsToRecalculate.isEmpty else { return }
-		
-		stats.isCalculating = true
-		stats.currentProjectIndex = 0
-		stats.totalProjectsToProcess = projectsToRecalculate.count
-		
-		for (idx, project) in projectsToRecalculate.enumerated() {
-			guard !Task.isCancelled else { break }
-			
-			// Find the project in our main array
-			guard let projectIndex = projects.firstIndex(where: { $0.id == project.id }) else {
-				continue
+			await MainActor.run {
+				self.stats.isCalculating = true
+				self.stats.currentProjectIndex = 0
+				self.stats.totalProjectsToProcess = self.projects.count
+				
+				for index in self.projects.indices {
+					self.projects[index].isCalculatingSize = true
+				}
 			}
 			
-			stats.currentOperation = "Recalculating: \(project.name) (\(idx + 1)/\(projectsToRecalculate.count))"
-			stats.currentProjectIndex = idx + 1
-			projects[projectIndex].isCalculatingSize = true
+			let projectsCopy = await MainActor.run { self.projects }
 			
-			let sizes = await calculateProjectSizes(for: projects[projectIndex])
-			projects[projectIndex].sizeBeforeCleaning = sizes.before
-			projects[projectIndex].cleanableSize = sizes.cleanable
-			projects[projectIndex].isCalculatingSize = false
+			// Use DispatchGroup for true parallelism
+			let group = DispatchGroup()
+			let lock = NSLock()
+			var completedCount = 0
 			
-			updateStats()
+			for project in projectsCopy {
+				if Task.isCancelled { break }
+				
+				group.enter()
+				self.processingQueue.async {
+					let sizes = self.calculateProjectSizesSync(for: project)
+					
+					// Update on main thread
+					Task { @MainActor in
+						if let index = self.projects.firstIndex(where: { $0.id == project.id }) {
+							self.projects[index].sizeBeforeCleaning = sizes.before
+							self.projects[index].cleanableSize = sizes.cleanable
+							self.projects[index].isCalculatingSize = false
+							
+							lock.lock()
+							completedCount += 1
+							let count = completedCount
+							lock.unlock()
+							
+							self.stats.currentProjectIndex = count
+							self.stats.currentOperation = "Calculating: \(self.projects[index].name) (\(count)/\(projectsCopy.count))"
+							self.updateStats()
+						}
+					}
+					
+					group.leave()
+				}
+			}
+			
+			// Wait for all to complete
+			group.wait()
+			
+			await MainActor.run {
+				self.stats.isCalculating = false
+				self.stats.currentOperation = "Ready to clean"
+				self.stats.currentProjectIndex = 0
+				self.stats.totalProjectsToProcess = 0
+			}
 		}
-		
-		stats.isCalculating = false
-		stats.currentOperation = "Ready to clean"
-		stats.currentProjectIndex = 0
-		stats.totalProjectsToProcess = 0
 	}
 	
-	private func calculateProjectSizes(for project: UnityProject) async -> (before: Int64, cleanable: Int64) {
-		// Run size calculation on background thread
-		return await Task.detached(priority: .userInitiated) {
-			let totalSize = await self.fileManager.directorySize(at: project.path)
-			let cleanableSize = await self.calculateCleanableSize(for: project)
-			return (totalSize, cleanableSize)
-		}.value
+	private func recalculateSpecificProjectsInBackground(_ projectsToRecalculate: [UnityProject]) {
+		Task.detached(priority: .userInitiated) { [weak self] in
+			guard let self = self else { return }
+			guard !projectsToRecalculate.isEmpty else { return }
+			
+			await MainActor.run {
+				self.stats.isCalculating = true
+				self.stats.currentProjectIndex = 0
+				self.stats.totalProjectsToProcess = projectsToRecalculate.count
+				
+				for project in projectsToRecalculate {
+					if let index = self.projects.firstIndex(where: { $0.id == project.id }) {
+						self.projects[index].isCalculatingSize = true
+					}
+				}
+			}
+			
+			let group = DispatchGroup()
+			let lock = NSLock()
+			var completedCount = 0
+			
+			for project in projectsToRecalculate {
+				if Task.isCancelled { break }
+				
+				group.enter()
+				self.processingQueue.async {
+					let sizes = self.calculateProjectSizesSync(for: project)
+					
+					Task { @MainActor in
+						if let index = self.projects.firstIndex(where: { $0.id == project.id }) {
+							self.projects[index].sizeBeforeCleaning = sizes.before
+							self.projects[index].cleanableSize = sizes.cleanable
+							self.projects[index].isCalculatingSize = false
+							
+							lock.lock()
+							completedCount += 1
+							let count = completedCount
+							lock.unlock()
+							
+							self.stats.currentProjectIndex = count
+							self.stats.currentOperation = "Recalculating: \(self.projects[index].name) (\(count)/\(projectsToRecalculate.count))"
+							self.updateStats()
+						}
+					}
+					
+					group.leave()
+				}
+			}
+			
+			group.wait()
+			
+			await MainActor.run {
+				self.stats.isCalculating = false
+				self.stats.currentOperation = "Ready to clean"
+				self.stats.currentProjectIndex = 0
+				self.stats.totalProjectsToProcess = 0
+			}
+		}
 	}
 	
-	private func calculateCleanableSize(for project: UnityProject) async -> Int64 {
+	// Synchronous calculation for use in DispatchQueue
+	private nonisolated func calculateProjectSizesSync(for project: UnityProject) -> (before: Int64, cleanable: Int64) {
+		let totalSize = fileManager.directorySizeSync(at: project.path)
+		let cleanableSize = calculateCleanableSizeSync(for: project)
+		return (totalSize, cleanableSize)
+	}
+	
+	private nonisolated func calculateCleanableSizeSync(for project: UnityProject) -> Int64 {
 		var totalCleanable: Int64 = 0
 		
 		// Calculate cleanable folders
 		for folder in UnityProject.cleanableFolders {
-			guard !Task.isCancelled else { break }
-			
 			let folderURL = project.path.appendingPathComponent(folder)
 			if fileManager.fileExists(atPath: folderURL.path) {
-				totalCleanable += await fileManager.directorySize(at: folderURL)
+				totalCleanable += fileManager.directorySizeSync(at: folderURL)
 			}
 		}
 		
 		// Calculate cleanable files
-		totalCleanable += await calculateCleanableFiles(in: project.path)
+		totalCleanable += calculateCleanableFilesSync(in: project.path)
 		
 		return totalCleanable
 	}
 	
-	private func calculateCleanableFiles(in directory: URL) async -> Int64 {
+	private nonisolated func calculateCleanableFilesSync(in directory: URL) -> Int64 {
 		var totalSize: Int64 = 0
 		
 		guard let enumerator = fileManager.enumerator(
@@ -222,16 +275,12 @@ class ProjectScannerViewModel: ObservableObject {
 		) else { return 0 }
 		
 		for case let fileURL as URL in enumerator {
-			guard !Task.isCancelled else { break }
-			
 			let fileName = fileURL.lastPathComponent
 			
-			// Skip if inside cleanable folders
 			if UnityProject.cleanableFolders.contains(where: { fileURL.path.contains("/\($0)/") }) {
 				continue
 			}
 			
-			// Check if file matches cleanable patterns
 			for pattern in UnityProject.cleanableFilePatterns {
 				if fileName.hasSuffix(pattern) {
 					if let size = try? fileURL.resourceValues(forKeys: [.fileSizeKey]).fileSize {
@@ -268,7 +317,6 @@ class ProjectScannerViewModel: ObservableObject {
 				result.successfulProjects.append(project.name)
 				cleanedProjects.append(project)
 			} catch {
-				// Continue cleaning other projects even if this one fails
 				let errorMessage = error.localizedDescription
 				result.failedProjects.append((name: project.name, error: errorMessage))
 				print("Failed to clean \(project.name): \(errorMessage)")
@@ -285,9 +333,8 @@ class ProjectScannerViewModel: ObservableObject {
 			stats.currentOperation = "Cleaned \(result.successfulProjects.count) of \(selectedProjects.count) projects"
 		}
 		
-		// Only recalculate the projects that were actually cleaned
 		if !cleanedProjects.isEmpty {
-			await recalculateSpecificProjects(cleanedProjects)
+			recalculateSpecificProjectsInBackground(cleanedProjects)
 		}
 		
 		return result
@@ -298,33 +345,28 @@ class ProjectScannerViewModel: ObservableObject {
 			var freedSpace: Int64 = 0
 			var errors: [Error] = []
 			
-			// Remove cleanable folders
 			for folder in UnityProject.cleanableFolders {
 				guard !Task.isCancelled else { break }
 				
 				let folderURL = project.path.appendingPathComponent(folder)
 				if self.fileManager.fileExists(atPath: folderURL.path) {
 					do {
-						let size = await self.fileManager.directorySize(at: folderURL)
+						let size = self.fileManager.directorySizeSync(at: folderURL)
 						try self.fileManager.removeItem(at: folderURL)
 						freedSpace += size
 					} catch {
-						// Log error but continue with other folders
 						errors.append(error)
 						print("Failed to remove \(folder) from \(project.name): \(error.localizedDescription)")
 					}
 				}
 			}
 			
-			// Remove cleanable files
 			do {
-				freedSpace += try await self.removeCleanableFiles(in: project.path)
+				freedSpace += try self.removeCleanableFilesSync(in: project.path)
 			} catch {
 				errors.append(error)
 			}
 			
-			// If we had errors but still freed some space, consider it a partial success
-			// If we freed no space and had errors, throw an error
 			if freedSpace == 0 && !errors.isEmpty {
 				throw errors.first ?? NSError(
 					domain: "ProjectCleaner",
@@ -337,7 +379,7 @@ class ProjectScannerViewModel: ObservableObject {
 		}.value
 	}
 	
-	private func removeCleanableFiles(in directory: URL) async throws -> Int64 {
+	private nonisolated func removeCleanableFilesSync(in directory: URL) throws -> Int64 {
 		var freedSpace: Int64 = 0
 		
 		guard let enumerator = fileManager.enumerator(
@@ -349,16 +391,12 @@ class ProjectScannerViewModel: ObservableObject {
 		var filesToRemove: [(URL, Int64)] = []
 		
 		for case let fileURL as URL in enumerator {
-			guard !Task.isCancelled else { break }
-			
 			let fileName = fileURL.lastPathComponent
 			
-			// Skip if inside cleanable folders (already removed)
 			if UnityProject.cleanableFolders.contains(where: { fileURL.path.contains("/\($0)/") }) {
 				continue
 			}
 			
-			// Check if file matches cleanable patterns
 			for pattern in UnityProject.cleanableFilePatterns {
 				if fileName.hasSuffix(pattern) {
 					if let size = try? fileURL.resourceValues(forKeys: [.fileSizeKey]).fileSize {
@@ -369,13 +407,11 @@ class ProjectScannerViewModel: ObservableObject {
 			}
 		}
 		
-		// Remove files (continue even if some fail)
 		for (fileURL, size) in filesToRemove {
 			do {
 				try fileManager.removeItem(at: fileURL)
 				freedSpace += size
 			} catch {
-				// Log but continue
 				print("Failed to remove file \(fileURL.lastPathComponent): \(error.localizedDescription)")
 			}
 		}
