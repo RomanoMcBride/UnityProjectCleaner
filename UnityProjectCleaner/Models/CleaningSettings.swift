@@ -28,7 +28,8 @@ class CleaningSettings: ObservableObject {
 		"Logs",
 		"MemoryCaptures",
 		"Build",
-		"Builds"
+		"Builds",
+		"Recordings"
 	]
 	
 	// User preference folders (safe but user might want to keep)
