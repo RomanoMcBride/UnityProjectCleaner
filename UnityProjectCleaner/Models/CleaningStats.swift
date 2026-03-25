@@ -7,8 +7,6 @@
 
 import Foundation
 
-import Foundation
-
 struct CleaningStats {
 	var totalProjects: Int = 0
 	var selectedProjects: Int = 0
@@ -31,5 +29,38 @@ struct CleaningStats {
 			return String(format: "%.0f%%", percentage)
 		}
 		return ""
+	}
+}
+
+struct CleaningResult {
+	var successfulProjects: [String] = []
+	var failedProjects: [(name: String, error: String)] = []
+	var totalFreed: Int64 = 0
+	
+	var wasSuccessful: Bool {
+		return failedProjects.isEmpty
+	}
+	
+	var summary: String {
+		var message = ""
+		
+		if !successfulProjects.isEmpty {
+			message += "✓ Successfully cleaned \(successfulProjects.count) project(s)\n"
+			message += "Freed: \(FormatHelper.formatBytes(totalFreed))\n"
+		}
+		
+		if !failedProjects.isEmpty {
+			message += "\n⚠️ Failed to clean \(failedProjects.count) project(s):\n"
+			for (name, error) in failedProjects {
+				message += "  • \(name): \(error)\n"
+			}
+			message += "\nTip: Try running the app with administrator privileges or check file permissions."
+		}
+		
+		if successfulProjects.isEmpty && failedProjects.isEmpty {
+			message = "No projects were cleaned."
+		}
+		
+		return message
 	}
 }

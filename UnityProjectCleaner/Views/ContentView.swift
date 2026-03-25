@@ -10,6 +10,7 @@ import SwiftUI
 struct ContentView: View {
 	@StateObject private var viewModel = ProjectScannerViewModel()
 	@State private var showingAlert = false
+	@State private var alertTitle = ""
 	@State private var alertMessage = ""
 	
 	var body: some View {
@@ -30,7 +31,7 @@ struct ContentView: View {
 				onClean: cleanProjects
 			)
 		}
-		.alert("Cleaning Complete", isPresented: $showingAlert) {
+		.alert(alertTitle, isPresented: $showingAlert) {
 			Button("OK", role: .cancel) { }
 		} message: {
 			Text(alertMessage)
@@ -39,14 +40,18 @@ struct ContentView: View {
 	
 	private func cleanProjects() {
 		Task {
-			do {
-				try await viewModel.cleanSelectedProjects()
-				alertMessage = viewModel.stats.currentOperation
-				showingAlert = true
-			} catch {
-				alertMessage = "Error during cleaning: \(error.localizedDescription)"
-				showingAlert = true
+			let result = await viewModel.cleanSelectedProjects()
+			
+			if result.wasSuccessful {
+				alertTitle = "✓ Cleaning Complete"
+			} else if result.successfulProjects.isEmpty {
+				alertTitle = "⚠️ Cleaning Failed"
+			} else {
+				alertTitle = "⚠️ Cleaning Partially Complete"
 			}
+			
+			alertMessage = result.summary
+			showingAlert = true
 		}
 	}
 }
@@ -140,4 +145,3 @@ struct HeaderView: View {
 		}
 	}
 }
-

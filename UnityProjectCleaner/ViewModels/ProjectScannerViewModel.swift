@@ -208,12 +208,13 @@ class ProjectScannerViewModel: ObservableObject {
 	
 	// MARK: - Cleaning
 	
-	func cleanSelectedProjects() async throws {
+	func cleanSelectedProjects() async -> CleaningResult {
 		stats.isCleaning = true
 		stats.currentProjectIndex = 0
 		let selectedProjects = projects.filter { $0.isSelected }
 		stats.totalProjectsToProcess = selectedProjects.count
-		var totalFreed: Int64 = 0
+		
+		var result = CleaningResult()
 		
 		for (index, project) in selectedProjects.enumerated() {
 			guard !Task.isCancelled else { break }
@@ -221,22 +222,38 @@ class ProjectScannerViewModel: ObservableObject {
 			stats.currentOperation = "Cleaning: \(project.name) (\(index + 1)/\(selectedProjects.count))"
 			stats.currentProjectIndex = index + 1
 			
-			let freed = try await cleanProject(project)
-			totalFreed += freed
+			do {
+				let freed = try await cleanProject(project)
+				result.totalFreed += freed
+				result.successfulProjects.append(project.name)
+			} catch {
+				// Continue cleaning other projects even if this one fails
+				let errorMessage = error.localizedDescription
+				result.failedProjects.append((name: project.name, error: errorMessage))
+				print("Failed to clean \(project.name): \(errorMessage)")
+			}
 		}
 		
 		stats.isCleaning = false
 		stats.currentProjectIndex = 0
 		stats.totalProjectsToProcess = 0
-		stats.currentOperation = "Cleaned \(selectedProjects.count) projects, freed \(FormatHelper.formatBytes(totalFreed))"
 		
-		// Recalculate sizes
+		if result.wasSuccessful {
+			stats.currentOperation = "✓ Cleaned \(result.successfulProjects.count) projects, freed \(FormatHelper.formatBytes(result.totalFreed))"
+		} else {
+			stats.currentOperation = "Cleaned \(result.successfulProjects.count) of \(selectedProjects.count) projects"
+		}
+		
+		// Recalculate sizes for all projects (even failed ones might have partial cleaning)
 		await calculateAllSizes()
+		
+		return result
 	}
 	
 	private func cleanProject(_ project: UnityProject) async throws -> Int64 {
 		return try await Task.detached(priority: .userInitiated) {
 			var freedSpace: Int64 = 0
+			var errors: [Error] = []
 			
 			// Remove cleanable folders
 			for folder in UnityProject.cleanableFolders {
@@ -244,14 +261,34 @@ class ProjectScannerViewModel: ObservableObject {
 				
 				let folderURL = project.path.appendingPathComponent(folder)
 				if self.fileManager.fileExists(atPath: folderURL.path) {
-					let size = await self.fileManager.directorySize(at: folderURL)
-					try self.fileManager.removeItem(at: folderURL)
-					freedSpace += size
+					do {
+						let size = await self.fileManager.directorySize(at: folderURL)
+						try self.fileManager.removeItem(at: folderURL)
+						freedSpace += size
+					} catch {
+						// Log error but continue with other folders
+						errors.append(error)
+						print("Failed to remove \(folder) from \(project.name): \(error.localizedDescription)")
+					}
 				}
 			}
 			
 			// Remove cleanable files
-			freedSpace += try await self.removeCleanableFiles(in: project.path)
+			do {
+				freedSpace += try await self.removeCleanableFiles(in: project.path)
+			} catch {
+				errors.append(error)
+			}
+			
+			// If we had errors but still freed some space, consider it a partial success
+			// If we freed no space and had errors, throw an error
+			if freedSpace == 0 && !errors.isEmpty {
+				throw errors.first ?? NSError(
+					domain: "ProjectCleaner",
+					code: -1,
+					userInfo: [NSLocalizedDescriptionKey: "Failed to clean project"]
+				)
+			}
 			
 			return freedSpace
 		}.value
@@ -289,10 +326,15 @@ class ProjectScannerViewModel: ObservableObject {
 			}
 		}
 		
-		// Remove files
+		// Remove files (continue even if some fail)
 		for (fileURL, size) in filesToRemove {
-			try? fileManager.removeItem(at: fileURL)
-			freedSpace += size
+			do {
+				try fileManager.removeItem(at: fileURL)
+				freedSpace += size
+			} catch {
+				// Log but continue
+				print("Failed to remove file \(fileURL.lastPathComponent): \(error.localizedDescription)")
+			}
 		}
 		
 		return freedSpace
