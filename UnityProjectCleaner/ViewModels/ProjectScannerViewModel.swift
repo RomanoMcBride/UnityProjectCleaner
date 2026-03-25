@@ -19,6 +19,12 @@ class ProjectScannerViewModel: ObservableObject {
 	
 	// MARK: - Scanning
 	
+	func resetScan() {
+		cancelScanning()
+		projects.removeAll()
+		stats = CleaningStats()
+	}
+	
 	func scanForProjects() {
 		// Cancel any existing scan
 		scanningTask?.cancel()

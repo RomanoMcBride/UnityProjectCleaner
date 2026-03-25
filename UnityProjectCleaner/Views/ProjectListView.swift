@@ -6,9 +6,11 @@
 //
 
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct ProjectListView: View {
 	@ObservedObject var viewModel: ProjectScannerViewModel
+	@State private var isTargeted = false
 	
 	var body: some View {
 		VStack(spacing: 0) {
@@ -35,18 +37,8 @@ struct ProjectListView: View {
 			
 			Divider()
 			
-			// Projects table
-			if viewModel.projects.isEmpty {
-				VStack {
-					Spacer()
-					Text("No Unity projects found")
-						.foregroundColor(.secondary)
-					Text("Click 'Scan' to search for projects")
-						.font(.caption)
-						.foregroundColor(.secondary)
-					Spacer()
-				}
-			} else {
+			// Projects table with drop zone overlay
+			ZStack {
 				ScrollView {
 					LazyVStack(spacing: 0) {
 						ForEach(viewModel.projects) { project in
@@ -59,6 +51,50 @@ struct ProjectListView: View {
 							Divider()
 						}
 					}
+				}
+				
+				// Overlay drop zone when dragging
+				if isTargeted {
+					VStack(spacing: 12) {
+						Image(systemName: "arrow.down.circle.fill")
+							.font(.system(size: 40))
+							.foregroundColor(.accentColor)
+						
+						Text("Drop to scan new location")
+							.font(.headline)
+							.foregroundColor(.primary)
+					}
+					.frame(maxWidth: .infinity, maxHeight: .infinity)
+					.background(Color(nsColor: .windowBackgroundColor).opacity(0.95))
+					.overlay(
+						RoundedRectangle(cornerRadius: 8)
+							.strokeBorder(Color.accentColor, style: StrokeStyle(lineWidth: 3, dash: [8, 4]))
+							.padding(20)
+					)
+				}
+			}
+			.onDrop(of: [.fileURL], isTargeted: $isTargeted) { providers in
+				handleDrop(providers: providers)
+				return true
+			}
+		}
+	}
+	
+	private func handleDrop(providers: [NSItemProvider]) {
+		guard let provider = providers.first else { return }
+		
+		provider.loadItem(forTypeIdentifier: "public.file-url", options: nil) { item, error in
+			guard let data = item as? Data,
+				  let url = URL(dataRepresentation: data, relativeTo: nil) else {
+				return
+			}
+			
+			DispatchQueue.main.async {
+				var isDirectory: ObjCBool = false
+				if FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory),
+				   isDirectory.boolValue {
+					viewModel.selectedPath = url.path
+					viewModel.scanForProjects()
 				}
 			}
 		}
