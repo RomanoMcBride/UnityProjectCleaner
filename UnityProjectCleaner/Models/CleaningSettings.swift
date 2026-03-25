@@ -8,18 +8,25 @@
 import Foundation
 import Combine
 
+import Foundation
+import Combine
+
 class CleaningSettings: ObservableObject {
 	static let shared = CleaningSettings()
 	
-	// Default folders (always safe to remove)
-	static let defaultCleanableFolders = [
+	// Folders that can be regenerated identically
+	static let regeneratableFolders = [
 		"Library",
 		"Temp",
 		"obj",
+		".vs",
+		".vscode"
+	]
+	
+	// Build output and logs (generated but not identical)
+	static let buildOutputFolders = [
 		"Logs",
 		"MemoryCaptures",
-		".vs",
-		".vscode",
 		"Build",
 		"Builds"
 	]
@@ -29,7 +36,10 @@ class CleaningSettings: ObservableObject {
 		"UserSettings"  // Unity user preferences (window layouts, etc.)
 	]
 	
-	// Default file patterns
+	// All default folders combined
+	static let defaultCleanableFolders = regeneratableFolders + buildOutputFolders
+	
+	// File patterns that can be regenerated
 	static let defaultCleanableFilePatterns = [
 		".csproj",
 		".sln",
@@ -85,7 +95,7 @@ class CleaningSettings: ObservableObject {
 	
 	// All available folders (for UI)
 	var allAvailableFolders: [String] {
-		return Self.defaultCleanableFolders + Self.userPreferenceFolders + customFolders
+		return Self.regeneratableFolders + Self.buildOutputFolders + Self.userPreferenceFolders + customFolders
 	}
 	
 	// All available patterns (for UI)
@@ -162,17 +172,23 @@ class CleaningSettings: ObservableObject {
 		save()
 	}
 	
-	// Check if a folder is a user preference folder
+	// Categorization helpers
+	func isRegeneratableFolder(_ folder: String) -> Bool {
+		return Self.regeneratableFolders.contains(folder)
+	}
+	
+	func isBuildOutputFolder(_ folder: String) -> Bool {
+		return Self.buildOutputFolders.contains(folder)
+	}
+	
 	func isUserPreferenceFolder(_ folder: String) -> Bool {
 		return Self.userPreferenceFolders.contains(folder)
 	}
 	
-	// Check if a folder is custom
 	func isCustomFolder(_ folder: String) -> Bool {
 		return customFolders.contains(folder)
 	}
 	
-	// Check if a pattern is custom
 	func isCustomFilePattern(_ pattern: String) -> Bool {
 		return customFilePatterns.contains(pattern)
 	}
