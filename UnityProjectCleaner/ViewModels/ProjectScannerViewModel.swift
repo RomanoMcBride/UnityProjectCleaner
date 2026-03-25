@@ -15,6 +15,7 @@ class ProjectScannerViewModel: ObservableObject {
 	@Published var selectedPath: String = NSHomeDirectory()
 	@Published var sortOption: ProjectSortOption = .lastUsed
 	@Published var sortAscending: Bool = false  // false = newest/largest first
+	@Published var hasScannedWithNoResults: Bool = false
 	
 	private let fileManager = FileManager.default
 	private var scanningTask: Task<Void, Never>?
@@ -46,6 +47,7 @@ class ProjectScannerViewModel: ObservableObject {
 		cancelScanning()
 		projects.removeAll()
 		stats = CleaningStats()
+		hasScannedWithNoResults = false
 	}
 	
 	func scanForProjects() {
@@ -57,6 +59,7 @@ class ProjectScannerViewModel: ObservableObject {
 			stats.currentOperation = "Scanning for Unity projects..."
 			stats.scanProgress = 0.0
 			projects.removeAll()
+			hasScannedWithNoResults = false  // Reset when starting scan
 			
 			await performScan()
 			
@@ -69,10 +72,19 @@ class ProjectScannerViewModel: ObservableObject {
 			stats.isScanning = false
 			stats.totalProjects = projects.count
 			stats.scanProgress = 1.0
+			
+			// Set flag if no projects found
+			if projects.isEmpty {
+				hasScannedWithNoResults = true
+				stats.currentOperation = "No Unity projects found"
+			}
+			
 			updateStats()
 			
-			// Start calculating sizes
-			calculateAllSizesInBackground()
+			// Start calculating sizes only if we found projects
+			if !projects.isEmpty {
+				calculateAllSizesInBackground()
+			}
 		}
 	}
 	
