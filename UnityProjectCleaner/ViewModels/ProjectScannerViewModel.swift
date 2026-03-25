@@ -145,6 +145,39 @@ class ProjectScannerViewModel: ObservableObject {
 		stats.totalProjectsToProcess = 0
 	}
 	
+	private func recalculateSpecificProjects(_ projectsToRecalculate: [UnityProject]) async {
+		guard !projectsToRecalculate.isEmpty else { return }
+		
+		stats.isCalculating = true
+		stats.currentProjectIndex = 0
+		stats.totalProjectsToProcess = projectsToRecalculate.count
+		
+		for (idx, project) in projectsToRecalculate.enumerated() {
+			guard !Task.isCancelled else { break }
+			
+			// Find the project in our main array
+			guard let projectIndex = projects.firstIndex(where: { $0.id == project.id }) else {
+				continue
+			}
+			
+			stats.currentOperation = "Recalculating: \(project.name) (\(idx + 1)/\(projectsToRecalculate.count))"
+			stats.currentProjectIndex = idx + 1
+			projects[projectIndex].isCalculatingSize = true
+			
+			let sizes = await calculateProjectSizes(for: projects[projectIndex])
+			projects[projectIndex].sizeBeforeCleaning = sizes.before
+			projects[projectIndex].cleanableSize = sizes.cleanable
+			projects[projectIndex].isCalculatingSize = false
+			
+			updateStats()
+		}
+		
+		stats.isCalculating = false
+		stats.currentOperation = "Ready to clean"
+		stats.currentProjectIndex = 0
+		stats.totalProjectsToProcess = 0
+	}
+	
 	private func calculateProjectSizes(for project: UnityProject) async -> (before: Int64, cleanable: Int64) {
 		// Run size calculation on background thread
 		return await Task.detached(priority: .userInitiated) {
@@ -215,6 +248,7 @@ class ProjectScannerViewModel: ObservableObject {
 		stats.totalProjectsToProcess = selectedProjects.count
 		
 		var result = CleaningResult()
+		var cleanedProjects: [UnityProject] = []
 		
 		for (index, project) in selectedProjects.enumerated() {
 			guard !Task.isCancelled else { break }
@@ -226,6 +260,7 @@ class ProjectScannerViewModel: ObservableObject {
 				let freed = try await cleanProject(project)
 				result.totalFreed += freed
 				result.successfulProjects.append(project.name)
+				cleanedProjects.append(project)
 			} catch {
 				// Continue cleaning other projects even if this one fails
 				let errorMessage = error.localizedDescription
@@ -244,8 +279,10 @@ class ProjectScannerViewModel: ObservableObject {
 			stats.currentOperation = "Cleaned \(result.successfulProjects.count) of \(selectedProjects.count) projects"
 		}
 		
-		// Recalculate sizes for all projects (even failed ones might have partial cleaning)
-		await calculateAllSizes()
+		// Only recalculate the projects that were actually cleaned
+		if !cleanedProjects.isEmpty {
+			await recalculateSpecificProjects(cleanedProjects)
+		}
 		
 		return result
 	}
