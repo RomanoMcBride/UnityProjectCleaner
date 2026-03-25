@@ -11,6 +11,8 @@ import UniformTypeIdentifiers
 struct ProjectListView: View {
 	@ObservedObject var viewModel: ProjectScannerViewModel
 	@State private var isTargeted = false
+	@State private var showingDatePicker = false
+	@State private var selectedDate = Calendar.current.date(byAdding: .month, value: -6, to: Date()) ?? Date()
 	
 	var body: some View {
 		VStack(spacing: 0) {
@@ -25,6 +27,50 @@ struct ProjectListView: View {
 					viewModel.deselectAll()
 				}
 				.keyboardShortcut("d", modifiers: .command)
+				
+				// Date-based selection
+				Button(action: {
+					showingDatePicker.toggle()
+				}) {
+					Label("Select Old Projects...", systemImage: "calendar.badge.clock")
+				}
+				.popover(isPresented: $showingDatePicker, arrowEdge: .bottom) {
+					VStack(alignment: .leading, spacing: 16) {
+						Text("Select projects not opened since:")
+							.font(.headline)
+						
+						DatePicker(
+							"",
+							selection: $selectedDate,
+							displayedComponents: [.date]
+						)
+						.datePickerStyle(.graphical)
+						.labelsHidden()
+						
+						HStack {
+							Text("\(projectsOlderThanDate.count) projects")
+								.font(.caption)
+								.foregroundColor(.secondary)
+							
+							Spacer()
+							
+							Button("Cancel") {
+								showingDatePicker = false
+							}
+							.keyboardShortcut(.escape, modifiers: [])
+							
+							Button("Select") {
+								selectProjectsOlderThan(selectedDate)
+								showingDatePicker = false
+							}
+							.buttonStyle(.borderedProminent)
+							.keyboardShortcut(.return, modifiers: [])
+							.disabled(projectsOlderThanDate.isEmpty)
+						}
+					}
+					.padding()
+					.frame(width: 300)
+				}
 				
 				Divider()
 					.frame(height: 20)
@@ -102,6 +148,22 @@ struct ProjectListView: View {
 			.onDrop(of: [.fileURL], isTargeted: $isTargeted) { providers in
 				handleDrop(providers: providers)
 				return true
+			}
+		}
+	}
+	
+	// Computed property to get projects older than selected date
+	private var projectsOlderThanDate: [UnityProject] {
+		viewModel.projects.filter { project in
+			project.lastModifiedDate < selectedDate && project.lastModifiedDate != Date.distantPast
+		}
+	}
+	
+	// Select projects older than date
+	private func selectProjectsOlderThan(_ date: Date) {
+		for project in viewModel.projects {
+			if project.lastModifiedDate < date && project.lastModifiedDate != Date.distantPast {
+				viewModel.toggleSelection(for: project)
 			}
 		}
 	}
