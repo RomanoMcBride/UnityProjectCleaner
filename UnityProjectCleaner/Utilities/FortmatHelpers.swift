@@ -24,4 +24,30 @@ struct FormatHelper {
 		}
 		return path
 	}
+	
+	static func formatRelativePath(_ url: URL, relativeTo base: URL) -> String? {
+		let basePath = base.path
+		let projectPath = url.path
+		
+		// Check if project is a direct child of the base
+		if url.deletingLastPathComponent().path == basePath {
+			return nil  // No path needed - it's in the root
+		}
+		
+		// Get the relative path
+		if projectPath.hasPrefix(basePath) {
+			let relativePath = projectPath.dropFirst(basePath.count)
+				.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+			
+			// Remove the project name itself from the end
+			if let range = relativePath.range(of: "/" + url.lastPathComponent) {
+				return String(relativePath[..<range.lowerBound])
+			}
+			
+			return String(relativePath)
+		}
+		
+		return projectPath
+	}
 }
+

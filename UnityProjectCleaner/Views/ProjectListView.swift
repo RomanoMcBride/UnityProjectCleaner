@@ -10,6 +10,7 @@ import UniformTypeIdentifiers
 
 struct ProjectListView: View {
 	@ObservedObject var viewModel: ProjectScannerViewModel
+	let scanRootPath: String
 	@State private var isTargeted = false
 	@State private var showingDatePicker = false
 	@State private var selectedDate = Calendar.current.date(byAdding: .month, value: -6, to: Date()) ?? Date()
@@ -162,6 +163,7 @@ struct ProjectListView: View {
 				.buttonStyle(.borderless)
 				.help(viewModel.sortAscending ? "Ascending" : "Descending")
 				
+				Spacer()
 			}
 			.padding(.horizontal)
 			.padding(.vertical, 8)
@@ -175,6 +177,7 @@ struct ProjectListView: View {
 						ForEach(viewModel.sortedProjects) { project in
 							ProjectRowView(
 								project: project,
+								scanRootURL: URL(fileURLWithPath: scanRootPath),
 								onToggle: {
 									viewModel.toggleSelection(for: project)
 								}
@@ -286,6 +289,7 @@ struct QuickDateButton: View {
 
 struct ProjectRowView: View {
 	let project: UnityProject
+	let scanRootURL: URL
 	let onToggle: () -> Void
 	
 	var body: some View {
@@ -304,16 +308,19 @@ struct ProjectRowView: View {
 					.fontWeight(.medium)
 				
 				HStack(spacing: 8) {
-					Text(FormatHelper.formatPath(project.path))
-						.font(.caption)
-						.foregroundColor(.secondary)
-						.lineLimit(1)
-					
-					if project.lastModifiedDate != Date.distantPast {
+					// Show relative path only if project is in a subfolder
+					if let relativePath = FormatHelper.formatRelativePath(project.path, relativeTo: scanRootURL) {
+						Text(relativePath)
+							.font(.caption)
+							.foregroundColor(.secondary)
+							.lineLimit(1)
+						
 						Text("•")
 							.foregroundColor(.secondary)
 							.font(.caption)
-						
+					}
+					
+					if project.lastModifiedDate != Date.distantPast {
 						Text(project.lastModifiedDate, style: .relative)
 							.font(.caption)
 							.foregroundColor(.secondary)
@@ -380,4 +387,3 @@ struct SizeLabel: View {
 		.frame(minWidth: 80)
 	}
 }
-

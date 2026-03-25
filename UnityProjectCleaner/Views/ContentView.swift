@@ -27,7 +27,7 @@ struct ContentView: View {
 				DropZoneView(viewModel: viewModel)
 			} else {
 				// Project List
-				ProjectListView(viewModel: viewModel)
+				ProjectListView(viewModel: viewModel, scanRootPath: viewModel.selectedPath)
 			}
 			
 			Divider()
@@ -71,9 +71,23 @@ struct HeaderView: View {
 	var body: some View {
 		VStack(spacing: 12) {
 			HStack {
-				Text("Unity Project Cleaner")
-					.font(.title)
-					.fontWeight(.bold)
+				VStack(alignment: .leading, spacing: 4) {
+					Text("Unity Project Cleaner")
+						.font(.title)
+						.fontWeight(.bold)
+					
+					// Show scanned path when we have projects
+					if !viewModel.projects.isEmpty {
+						HStack(spacing: 4) {
+							Image(systemName: "folder")
+								.font(.caption)
+								.foregroundColor(.secondary)
+							Text(FormatHelper.formatPath(URL(fileURLWithPath: viewModel.selectedPath)))
+								.font(.caption)
+								.foregroundColor(.secondary)
+						}
+					}
+				}
 				
 				Spacer()
 				
@@ -117,7 +131,7 @@ struct HeaderView: View {
 					)
 					.progressViewStyle(.linear)
 				}
-			} else if !viewModel.stats.currentOperation.isEmpty {
+			} else if !viewModel.stats.currentOperation.isEmpty && !viewModel.projects.isEmpty {
 				HStack {
 					Text(viewModel.stats.currentOperation)
 						.font(.caption)
