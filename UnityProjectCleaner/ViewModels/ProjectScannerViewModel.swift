@@ -441,27 +441,42 @@ class ProjectScannerViewModel: ObservableObject {
 	
 	// MARK: - Selection Management
 	
+	func setSelection(for project: UnityProject, selected: Bool) {
+		if let index = projects.firstIndex(where: { $0.id == project.id }) {
+			projects[index].isSelected = selected
+			updateStats()
+		}
+	}
+
+	func selectProjectsMatching(_ predicate: (UnityProject) -> Bool) {
+		// Set selection state for ALL projects based on predicate
+		for index in projects.indices {
+			projects[index].isSelected = predicate(projects[index])
+		}
+		updateStats()
+	}
+
 	func toggleSelection(for project: UnityProject) {
 		if let index = projects.firstIndex(where: { $0.id == project.id }) {
 			projects[index].isSelected.toggle()
 			updateStats()
 		}
 	}
-	
+
 	func selectAll() {
 		for index in projects.indices {
 			projects[index].isSelected = true
 		}
 		updateStats()
 	}
-	
+
 	func deselectAll() {
 		for index in projects.indices {
 			projects[index].isSelected = false
 		}
 		updateStats()
 	}
-	
+
 	private func updateStats() {
 		stats.totalProjects = projects.count
 		stats.selectedProjects = projects.filter { $0.isSelected }.count

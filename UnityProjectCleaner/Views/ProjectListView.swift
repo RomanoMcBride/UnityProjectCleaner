@@ -159,12 +159,10 @@ struct ProjectListView: View {
 		}
 	}
 	
-	// Select projects older than date
+	// Select projects older than date (now properly sets selection state)
 	private func selectProjectsOlderThan(_ date: Date) {
-		for project in viewModel.projects {
-			if project.lastModifiedDate < date && project.lastModifiedDate != Date.distantPast {
-				viewModel.toggleSelection(for: project)
-			}
+		viewModel.selectProjectsMatching { project in
+			project.lastModifiedDate < date && project.lastModifiedDate != Date.distantPast
 		}
 	}
 	
