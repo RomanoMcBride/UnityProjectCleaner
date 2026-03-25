@@ -21,31 +21,15 @@ struct UnityProject: Identifiable, Equatable {
 		return sizeBeforeCleaning - cleanableSize
 	}
 	
-	// Folders that can be safely deleted
-	static let cleanableFolders = [
-		"Library",
-		"Temp",
-		"obj",
-		"Logs",
-		"MemoryCaptures",
-		".vs",
-		".vscode",
-		"Build",
-		"Builds"
-	]
+	// Get cleanable folders from settings
+	static var cleanableFolders: [String] {
+		return CleaningSettings.shared.activeCleanableFolders
+	}
 	
-	// Files that can be safely deleted
-	static let cleanableFilePatterns = [
-		//".csproj",
-		//".sln",
-		".suo",
-		//".user",
-		//".userprefs",
-		".pidb",
-		".booproj",
-		".unityproj",
-		".DS_Store"
-	]
+	// Get cleanable file patterns from settings
+	static var cleanableFilePatterns: [String] {
+		return CleaningSettings.shared.activeCleanableFilePatterns
+	}
 	
 	init(path: URL) {
 		self.path = path

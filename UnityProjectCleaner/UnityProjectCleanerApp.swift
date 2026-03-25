@@ -16,5 +16,10 @@ struct UnityProjectCleanerApp: App {
 		}
 		.windowStyle(.hiddenTitleBar)
 		.windowResizability(.contentSize)
+		
+		// Preferences window
+		Settings {
+			PreferencesView()
+		}
 	}
 }
