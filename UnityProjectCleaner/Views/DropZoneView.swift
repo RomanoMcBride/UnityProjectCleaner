@@ -31,24 +31,7 @@ struct DropZoneView: View {
 					.font(.body)
 					.foregroundColor(.secondary)
 					.multilineTextAlignment(.center)
-				
-				VStack(alignment: .leading, spacing: 8) {
-					HStack {
-						Image(systemName: "checkmark.circle.fill")
-							.foregroundColor(.green)
-						Text("External drives")
-					}
-					HStack {
-						Image(systemName: "checkmark.circle.fill")
-							.foregroundColor(.green)
-						Text("Project folders")
-					}
-					HStack {
-						Image(systemName: "checkmark.circle.fill")
-							.foregroundColor(.green)
-						Text("Your home directory")
-					}
-				}
+
 				.font(.caption)
 				.foregroundColor(.secondary)
 				.padding(.top, 8)
