@@ -1,0 +1,578 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXContainerItemProxy section */
+		D1B45EF12F74544C008DD5E9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D1B45EDB2F74544A008DD5E9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D1B45EE22F74544A008DD5E9;
+			remoteInfo = UnityProjectCleaner;
+		};
+		D1B45EFB2F74544C008DD5E9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D1B45EDB2F74544A008DD5E9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D1B45EE22F74544A008DD5E9;
+			remoteInfo = UnityProjectCleaner;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		D1B45EE32F74544A008DD5E9 /* UnityProjectCleaner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UnityProjectCleaner.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D1B45EF02F74544C008DD5E9 /* UnityProjectCleanerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UnityProjectCleanerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D1B45EFA2F74544C008DD5E9 /* UnityProjectCleanerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UnityProjectCleanerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		D1B45EE52F74544A008DD5E9 /* UnityProjectCleaner */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = UnityProjectCleaner;
+			sourceTree = "<group>";
+		};
+		D1B45EF32F74544C008DD5E9 /* UnityProjectCleanerTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = UnityProjectCleanerTests;
+			sourceTree = "<group>";
+		};
+		D1B45EFD2F74544C008DD5E9 /* UnityProjectCleanerUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = UnityProjectCleanerUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D1B45EE02F74544A008DD5E9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D1B45EED2F74544C008DD5E9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D1B45EF72F74544C008DD5E9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		D1B45EDA2F74544A008DD5E9 = {
+			isa = PBXGroup;
+			children = (
+				D1B45EE52F74544A008DD5E9 /* UnityProjectCleaner */,
+				D1B45EF32F74544C008DD5E9 /* UnityProjectCleanerTests */,
+				D1B45EFD2F74544C008DD5E9 /* UnityProjectCleanerUITests */,
+				D1B45EE42F74544A008DD5E9 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		D1B45EE42F74544A008DD5E9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D1B45EE32F74544A008DD5E9 /* UnityProjectCleaner.app */,
+				D1B45EF02F74544C008DD5E9 /* UnityProjectCleanerTests.xctest */,
+				D1B45EFA2F74544C008DD5E9 /* UnityProjectCleanerUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		D1B45EE22F74544A008DD5E9 /* UnityProjectCleaner */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D1B45F042F74544C008DD5E9 /* Build configuration list for PBXNativeTarget "UnityProjectCleaner" */;
+			buildPhases = (
+				D1B45EDF2F74544A008DD5E9 /* Sources */,
+				D1B45EE02F74544A008DD5E9 /* Frameworks */,
+				D1B45EE12F74544A008DD5E9 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				D1B45EE52F74544A008DD5E9 /* UnityProjectCleaner */,
+			);
+			name = UnityProjectCleaner;
+			packageProductDependencies = (
+			);
+			productName = UnityProjectCleaner;
+			productReference = D1B45EE32F74544A008DD5E9 /* UnityProjectCleaner.app */;
+			productType = "com.apple.product-type.application";
+		};
+		D1B45EEF2F74544C008DD5E9 /* UnityProjectCleanerTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D1B45F072F74544C008DD5E9 /* Build configuration list for PBXNativeTarget "UnityProjectCleanerTests" */;
+			buildPhases = (
+				D1B45EEC2F74544C008DD5E9 /* Sources */,
+				D1B45EED2F74544C008DD5E9 /* Frameworks */,
+				D1B45EEE2F74544C008DD5E9 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D1B45EF22F74544C008DD5E9 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				D1B45EF32F74544C008DD5E9 /* UnityProjectCleanerTests */,
+			);
+			name = UnityProjectCleanerTests;
+			packageProductDependencies = (
+			);
+			productName = UnityProjectCleanerTests;
+			productReference = D1B45EF02F74544C008DD5E9 /* UnityProjectCleanerTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		D1B45EF92F74544C008DD5E9 /* UnityProjectCleanerUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D1B45F0A2F74544C008DD5E9 /* Build configuration list for PBXNativeTarget "UnityProjectCleanerUITests" */;
+			buildPhases = (
+				D1B45EF62F74544C008DD5E9 /* Sources */,
+				D1B45EF72F74544C008DD5E9 /* Frameworks */,
+				D1B45EF82F74544C008DD5E9 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D1B45EFC2F74544C008DD5E9 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				D1B45EFD2F74544C008DD5E9 /* UnityProjectCleanerUITests */,
+			);
+			name = UnityProjectCleanerUITests;
+			packageProductDependencies = (
+			);
+			productName = UnityProjectCleanerUITests;
+			productReference = D1B45EFA2F74544C008DD5E9 /* UnityProjectCleanerUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D1B45EDB2F74544A008DD5E9 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2630;
+				LastUpgradeCheck = 2630;
+				TargetAttributes = {
+					D1B45EE22F74544A008DD5E9 = {
+						CreatedOnToolsVersion = 26.3;
+					};
+					D1B45EEF2F74544C008DD5E9 = {
+						CreatedOnToolsVersion = 26.3;
+						TestTargetID = D1B45EE22F74544A008DD5E9;
+					};
+					D1B45EF92F74544C008DD5E9 = {
+						CreatedOnToolsVersion = 26.3;
+						TestTargetID = D1B45EE22F74544A008DD5E9;
+					};
+				};
+			};
+			buildConfigurationList = D1B45EDE2F74544A008DD5E9 /* Build configuration list for PBXProject "UnityProjectCleaner" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = D1B45EDA2F74544A008DD5E9;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = D1B45EE42F74544A008DD5E9 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D1B45EE22F74544A008DD5E9 /* UnityProjectCleaner */,
+				D1B45EEF2F74544C008DD5E9 /* UnityProjectCleanerTests */,
+				D1B45EF92F74544C008DD5E9 /* UnityProjectCleanerUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		D1B45EE12F74544A008DD5E9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D1B45EEE2F74544C008DD5E9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D1B45EF82F74544C008DD5E9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D1B45EDF2F74544A008DD5E9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D1B45EEC2F74544C008DD5E9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D1B45EF62F74544C008DD5E9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D1B45EF22F74544C008DD5E9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D1B45EE22F74544A008DD5E9 /* UnityProjectCleaner */;
+			targetProxy = D1B45EF12F74544C008DD5E9 /* PBXContainerItemProxy */;
+		};
+		D1B45EFC2F74544C008DD5E9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D1B45EE22F74544A008DD5E9 /* UnityProjectCleaner */;
+			targetProxy = D1B45EFB2F74544C008DD5E9 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		D1B45F022F74544C008DD5E9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = BVPN9UFA9B;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.7;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		D1B45F032F74544C008DD5E9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = BVPN9UFA9B;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.7;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		D1B45F052F74544C008DD5E9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = BVPN9UFA9B;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.unity.UnityProjectCleaner;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		D1B45F062F74544C008DD5E9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = BVPN9UFA9B;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.unity.UnityProjectCleaner;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		D1B45F082F74544C008DD5E9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = BVPN9UFA9B;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.7;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.unity.UnityProjectCleanerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/UnityProjectCleaner.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/UnityProjectCleaner";
+			};
+			name = Debug;
+		};
+		D1B45F092F74544C008DD5E9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = BVPN9UFA9B;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.7;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.unity.UnityProjectCleanerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/UnityProjectCleaner.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/UnityProjectCleaner";
+			};
+			name = Release;
+		};
+		D1B45F0B2F74544C008DD5E9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = BVPN9UFA9B;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.unity.UnityProjectCleanerUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = UnityProjectCleaner;
+			};
+			name = Debug;
+		};
+		D1B45F0C2F74544C008DD5E9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = BVPN9UFA9B;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.unity.UnityProjectCleanerUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = UnityProjectCleaner;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		D1B45EDE2F74544A008DD5E9 /* Build configuration list for PBXProject "UnityProjectCleaner" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D1B45F022F74544C008DD5E9 /* Debug */,
+				D1B45F032F74544C008DD5E9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D1B45F042F74544C008DD5E9 /* Build configuration list for PBXNativeTarget "UnityProjectCleaner" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D1B45F052F74544C008DD5E9 /* Debug */,
+				D1B45F062F74544C008DD5E9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D1B45F072F74544C008DD5E9 /* Build configuration list for PBXNativeTarget "UnityProjectCleanerTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D1B45F082F74544C008DD5E9 /* Debug */,
+				D1B45F092F74544C008DD5E9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D1B45F0A2F74544C008DD5E9 /* Build configuration list for PBXNativeTarget "UnityProjectCleanerUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D1B45F0B2F74544C008DD5E9 /* Debug */,
+				D1B45F0C2F74544C008DD5E9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = D1B45EDB2F74544A008DD5E9 /* Project object */;
+}
