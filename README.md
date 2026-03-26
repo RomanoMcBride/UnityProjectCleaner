@@ -1,8 +1,9 @@
 # UnityProjectCleaner
 
-Cleans your disk of unity caches that can be re-generated, to free up space from rarely used Unity projects.
+Cleans your disk of unity caches that can be re-generated, to free up space used by rarely used Unity projects.
 
-<img width="1036" height="836" alt="projectCleaner" src="https://github.com/user-attachments/assets/24f785e8-5525-4838-bf5c-ec1a8e75e4ea" />
+<img width="1012" height="820" alt="screenshot of the tool showing some projects that can be cleaned" src="https://github.com/user-attachments/assets/16095bbe-1667-4fc6-b5d6-5141d7f213e9" />
+
 
 # Who is this for?
 
