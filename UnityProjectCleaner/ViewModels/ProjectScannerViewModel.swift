@@ -279,25 +279,28 @@ class ProjectScannerViewModel: ObservableObject {
 		let cleanableSize = calculateCleanableSizeSync(for: project)
 		return (totalSize, cleanableSize)
 	}
-	
+
 	private nonisolated func calculateCleanableSizeSync(for project: UnityProject) -> Int64 {
 		var totalCleanable: Int64 = 0
+		var cleanableFolderPaths: Set<String> = []
 		
-		// Calculate cleanable folders
+		// Calculate cleanable folders and track their paths
 		for folder in UnityProject.cleanableFolders {
 			let folderURL = project.path.appendingPathComponent(folder)
 			if fileManager.fileExists(atPath: folderURL.path) {
-				totalCleanable += fileManager.directorySizeSync(at: folderURL)
+				let size = fileManager.directorySizeSync(at: folderURL)
+				totalCleanable += size
+				cleanableFolderPaths.insert(folderURL.path)
 			}
 		}
 		
-		// Calculate cleanable files
-		totalCleanable += calculateCleanableFilesSync(in: project.path)
+		// Calculate cleanable files (but skip any inside cleanable folders)
+		totalCleanable += calculateCleanableFilesSync(in: project.path, excludingPaths: cleanableFolderPaths)
 		
 		return totalCleanable
 	}
-	
-	private nonisolated func calculateCleanableFilesSync(in directory: URL) -> Int64 {
+
+	private nonisolated func calculateCleanableFilesSync(in directory: URL, excludingPaths: Set<String> = []) -> Int64 {
 		var totalSize: Int64 = 0
 		
 		guard let enumerator = fileManager.enumerator(
@@ -308,11 +311,22 @@ class ProjectScannerViewModel: ObservableObject {
 		
 		for case let fileURL as URL in enumerator {
 			let fileName = fileURL.lastPathComponent
+			let filePath = fileURL.path
 			
-			if UnityProject.cleanableFolders.contains(where: { fileURL.path.contains("/\($0)/") }) {
+			// Skip if this file is inside any cleanable folder
+			var shouldSkip = false
+			for excludedPath in excludingPaths {
+				if filePath.hasPrefix(excludedPath + "/") || filePath == excludedPath {
+					shouldSkip = true
+					break
+				}
+			}
+			
+			if shouldSkip {
 				continue
 			}
 			
+			// Check if file matches cleanable patterns
 			for pattern in UnityProject.cleanableFilePatterns {
 				if fileName.hasSuffix(pattern) {
 					if let size = try? fileURL.resourceValues(forKeys: [.fileSizeKey]).fileSize {
