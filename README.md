@@ -2,8 +2,8 @@
 
 Cleans your disk of unity caches that can be re-generated, to free up space used by rarely used Unity projects.
 
-<img width="1012" height="820" alt="screenshot of the tool showing some projects that can be cleaned" src="https://github.com/user-attachments/assets/16095bbe-1667-4fc6-b5d6-5141d7f213e9" />
 
+<img width="1012" height="740" alt="screenshot of the tool showing a list of projects that can be cleaned" src="https://github.com/user-attachments/assets/04773d79-2fb4-42de-8211-2e3587242186" />
 
 # Who is this for?
 
