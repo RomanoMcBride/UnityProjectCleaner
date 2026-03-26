@@ -18,7 +18,7 @@ struct UnityProject: Identifiable, Equatable {
 	var lastModifiedDate: Date = Date.distantPast
 	
 	var sizeAfterCleaning: Int64 {
-		return sizeBeforeCleaning - cleanableSize
+		return max(0, sizeBeforeCleaning - cleanableSize)
 	}
 	
 	// Get cleanable folders from settings
